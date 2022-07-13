@@ -1462,7 +1462,7 @@ def _separate_channel_options(options):
 class Channel(grpc.Channel):
     """A cygrpc.Channel-backed implementation of grpc.Channel."""
 
-    def __init__(self, target, options, credentials, compression):
+    def __init__(self, target, options, credentials, compression, fd=-1):
         """Constructor.
 
         Args:
@@ -1477,7 +1477,7 @@ class Channel(grpc.Channel):
         self._process_python_options(python_options)
         self._channel = cygrpc.Channel(
             _common.encode(target), _augment_options(core_options, compression),
-            credentials)
+            credentials, fd)
         self._call_state = _ChannelCallState(self._channel)
         self._connectivity_state = _ChannelConnectivityState(self._channel)
         cygrpc.fork_register_channel(self)

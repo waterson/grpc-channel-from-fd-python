@@ -1979,6 +1979,27 @@ def insecure_channel(target, options=None, compression=None):
                             compression)
 
 
+def insecure_channel_from_fd(target, fd, options=None, compression=None):
+    """Creates an insecure Channel to a server.
+
+    The returned Channel is thread-safe.
+
+    Args:
+      target: The server address
+      fd: The file descriptor to use
+      options: An optional list of key-value pairs (:term:`channel_arguments`
+        in gRPC Core runtime) to configure the channel.
+      compression: An optional value indicating the compression method to be
+        used over the lifetime of the channel. This is an EXPERIMENTAL option.
+
+    Returns:
+      A Channel.
+    """
+    from grpc import _channel  # pylint: disable=cyclic-import
+    return _channel.Channel(target, () if options is None else options, None,
+                            compression, fd)
+
+
 def secure_channel(target, credentials, options=None, compression=None):
     """Creates a secure Channel to a server.
 

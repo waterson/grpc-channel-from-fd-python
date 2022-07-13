@@ -442,7 +442,8 @@ cdef class Channel:
 
   def __cinit__(
       self, bytes target, object arguments,
-      ChannelCredentials channel_credentials):
+      ChannelCredentials channel_credentials,
+      int fd):
     arguments = () if arguments is None else tuple(arguments)
     fork_handlers_and_grpc_init()
     self._state = _ChannelState()
@@ -455,8 +456,12 @@ cdef class Channel:
     c_channel_credentials = (
         channel_credentials.c() if channel_credentials is not None
         else grpc_insecure_credentials_create())
-    self._state.c_channel = grpc_channel_create(
-        <char *>target, c_channel_credentials, channel_args.c_args())
+    if fd > 0:
+      self._state.c_channel = grpc_channel_create_from_fd(
+          <char *>target, fd, c_channel_credentials, channel_args.c_args())
+    else:
+      self._state.c_channel = grpc_channel_create(
+          <char *>target, c_channel_credentials, channel_args.c_args())
     grpc_channel_credentials_release(c_channel_credentials)
 
   def target(self):

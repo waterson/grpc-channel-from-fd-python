@@ -463,6 +463,13 @@ cdef extern from "grpc/grpc.h":
   grpc_slice grpc_dump_xds_configs() nogil
 
 
+cdef extern from "grpc/grpc_posix.h":
+
+  grpc_channel *grpc_channel_create_from_fd(
+      const char* target, int fd, grpc_channel_credentials* creds,
+      const grpc_channel_args* args) nogil
+
+
 cdef extern from "grpc/grpc_security.h":
 
   # Declare this as an enum, this is the only way to make it a const in
